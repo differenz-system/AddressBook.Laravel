@@ -2,29 +2,43 @@
 
 ## Overview
 
-This repository contains **Address Book** application for Laravel that shows design & coding practices followed by **[Differenz System](http://www.differenzsystem.com/)**.
+This repository contains **Blog Management** application for Laravel that shows design & coding practices followed by **[Differenz System](http://www.differenzsystem.com/)**.
 
 
 The app does the following:
-1. **Login:** User can login via emailId/password. 
-2. **Get All Address:** It will list all the save contacts, having the option to add a new contact.
-3. **Create new contact:** User can add a new contact to his address book by filling detail.
+1. **Register** new account
+2. **Login** user can login
+3. **Make** new blogs
+4. **Get**  User created blogs
+5. **Get**  Blog detail by blog id
+6. **Update** update blog by blog id
+7. **Delete** delete blog by blog id
 
 
 ## Pre-requisites
--[Visual Studio code](https://code.visualstudio.com/)
--[ Laravel ](https://laravel.com/)
--[ MySql ](https://www.mysql.com/)
+- [ Visual Studio code](https://code.visualstudio.com/)
+- [ Laravel 8.x](https://laravel.com/docs/8.x)
+- [ MySql ](https://www.mysql.com/)
+- [ Postman ](https://www.postman.com/)
 
 
 ## Getting Started
-1. [Install Visual Studio code](https://code.visualstudio.com/) Editor.
+1. Install [Visual Studio code](https://code.visualstudio.com/) Editor.
 2. Clone this sample repository in to the PHP configuration folder
 3. Open Terminal, go to location of the repo
 4. Install [Composer](https://getcomposer.org/). If you don't have a composer in the machine.
-4. Enter command for install the 'Composer Update' (make sure to go inside project first). It will add required file in the Project.
-5. Create database 'address_book' in PhpMyAdmin Panel.
-6. Enter Command in CMD 'php artisan migrate' for create table in the database.
+5. Enter command for install the 'Composer Update' (make sure to go inside project first). It will add required file in the Project.
+   `` $composer update``
+6. Create database and setup database name and user name on with apropriate password on.env file 
+    ```
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=laravel_project
+    DB_USERNAME=root
+    DB_PASSWORD=
+ 7. Enter following Command in CMD for create table in the database
+    ``$php artisan migrate``
 
 
 ## Key Tools & Technologies
@@ -34,161 +48,228 @@ The app does the following:
 - **IDE:**  VSCode
 - **Framework:** Laravel
 
-Now call the API one by one.
+## Now call the API one by one.
 
-##API
-### Register New user
+### Register a new user
 Registration: 
-http://localhost:8181/addressbook/public/api/RegisterUser
+**POST URL: http://localhost/project_name/api/RegisterUser**
 
 **Request:**
 ```
     {        
         "first_name":"test",
-        "last_name":"test",
-        "email_id":"test@differenzsystem.com",
-        "password":"password123",
+        "last_name":"differenzsystem",
+        "email":"diff@differenzsystem.com",
+        "password":"$atyam12345"
     }
 ```
 
-**Response:**
+**Validation Response:**
 ```
 	{
-        "IsSuccess": 1,
+        "success": false,
+        "status_code": 200,
+        "message": "Validation run successfully!",
         "data": {
-            "user_id": 1
-        },
-        "msg": "Registered successfully"
+            "email": "The email has already been taken."
+        }
+    }
+```
+**Success Response:**
+```
+	{
+        "success": true,
+        "status_code": 200,
+        "message": "User registration successdully!",
+        "data": {
+            "first_name": "test",
+            "last_name": "differenzsystem",
+            "email": "diffe@differenzsystem.com",
+            "updated_at": "2021-05-28T10:37:42.000000Z",
+            "created_at": "2021-05-28T10:37:42.000000Z",
+            "id": 2
+        }
     }
 ```
 
-###
-login:
-http://localhost:8181/addressbook/public/api/login
+### login:
+
+**POST URL: http://localhost/project_name/api/login**
+
+**Request:**
+```
+     {        
+            "email":"diffe@differenzsystem.com",
+            "password":"$atyam12345"
+    }
+```
+**Email Validation Response:**
+```
+    {
+        "success": false,
+        "status_code": 200,
+        "message": "User email not found!",
+        "data": {}
+    }
+```
+**Password Validation Response:**
+```
+    {
+        "success": false,
+        "status_code": 200,
+        "message": "User password not valid!",
+        "data": {}
+    }
+```
+
+
+**Success Response:**
+```
+    {
+        "success": true,
+        "status_code": 200,
+        "message": "Login successdully!",
+        "data": {
+            "id": 2,
+            "first_name": "test",
+            "last_name": "differenzsystem",
+            "email": "diffe@differenzsystem.com",
+            "created_at": "2021-05-28T10:37:42.000000Z",
+            "updated_at": "2021-05-28T10:37:42.000000Z"
+        }
+    }
+```
+### Make new blog:
+create a new blog for login user
+
+**POST URL: http://localhost/project_name/api/blog/store/**``{login_user_id}``
 
 **Request:**
 ```
     {
-        "email_id":"test@differenzsystem.com",
-        "password":"password123"
+        "title":"Dummy",
+        "description":"Hay dummy wahtsapp",
+        "tags":"dummy,demo,hay,wahtsapp"
     }
 ```
+
 **Response:**
 ```
     {
-		"IsSuccess": 1,
+        "success": true,
+        "status_code": 200,
+        "message": "Successfully store your blog",
         "data": {
-            "user_id": 1
-        },
-        "msg": "Successfully logged-in"
+            "title": "Dummy",
+            "description": "Hay dummy wahtsapp",
+            "tags": "dummy,demo,hay,wahtsapp",
+            "user_id": 1,
+            "status": 1,
+            "updated_at": "2021-05-28T10:45:15.000000Z",
+            "created_at": "2021-05-28T10:45:15.000000Z",
+            "id": 7
+        }
     }
 ```
-###
 
+### Get Blog List:
+get all blog list of login user
 
-Display address by user_id:
-http://localhost:8181/addressbook/public/api/GetAddressBookList
-
-**Request:**
-```
-    {
-        "user_id":1
-    }
-```
+**GET URL: http://localhost/project_name/api/blog/**``{login_user_id}``
 
 **Response:**
 ```
-    {
-        "IsSuccess": 1,
+   {
+        "success": true,
+        "status_code": 200,
+        "message": "My blogs list!",
         "data": [
             {
-            "address_book_id": 1,
-            "user_id": 1,
-            "first_name": "tom",
-            "last_name": "joseph",
-            "email_id": "tom@differenzsystem.com",
-			"contact_no":9898989898
-            "is_active": 1
+                "id": 2,
+                "user_id": 1,
+                "title": "Demo",
+                "description": "Hay demo wahtsapp",
+                "status": 1,
+                "tags": "demo,hay,wahtsapp",
+                "created_at": "2021-04-13T06:00:05.000000Z",
+                "updated_at": "2021-04-13T06:00:05.000000Z"
             },
             {
-            "address_book_id": 2,
-            "user_id": 1,
-            "first_name": "Mark",
-            "last_name": "joseph",
-            "email_id": "mark@differenzsystem.com",
-			"contact_no":9797979797
-            "is_active": 1
+                "id": 3,
+                "user_id": 1,
+                "title": "aa",
+                "description": "Hay dummy wahtsapp",
+                "status": 1,
+                "tags": "dummy,demo,hay,wahtsapp",
+                "created_at": "2021-04-13T07:26:26.000000Z",
+                "updated_at": "2021-04-13T07:26:26.000000Z"
             }
-        ],
-        "msg": "success"
+        ]
     }
 ```
 
-###
-Add Address
-http://localhost:8181/addressbook/public/api/AddAddressBook
+
+### Get Blog details:
+get single blog details use blog id
+
+**GET URL: http://localhost/project_name/api/blog/show/**``{blog_id}``
+
+**Response:**
+```
+   {
+        "success": true,
+        "status_code": 200,
+        "message": "Successfully get blog",
+        "data": {
+            "id": 2,
+            "user_id": 1,
+            "title": "Demo",
+            "description": "Hay demo wahtsapp",
+            "status": 1,
+            "tags": "demo,hay,wahtsapp",
+            "created_at": "2021-04-13T06:00:05.000000Z",
+            "updated_at": "2021-04-13T06:00:05.000000Z"
+        }
+    }
+```
+
+### Update blog:
+update a new blog use blog id
+
+**POST URL: http://localhost/project_name/api/blog/update/**``{blog_id}``
 
 **Request:**
 ```
     {
-		"address_book_id" : 0, // To add pass 0
-        "user_id":"test",
-        "email_id":"test",
-        "first_name":"test@gmail.com",
-		"last_name":"test@gmail.com",
-		"is_active":1,
-        "contact_no":"7878985845",
-    }
-```
-**Response:**
-```
-    {
-        "IsSuccess": 1,
-        "msg": "Address Book added successfully"
-    }
-```
-
-###
-Update Address
-http://localhost:8181/addressbook/public/api/AddAddressBook
-
-**Request:**
-```
-    {
-        "address_book_id" : 1, // For Update pass address_book_id
-        "user_id":"test",
-        "email_id":"test",
-        "first_name":"test@gmail.com",
-		"last_name":"test@gmail.com",
-		"is_active":1,
-        "contact_no":"7878985845",
+        "title":"Dummy update",
+        "description":"Hay dummy wahtsapp update",
+        "tags":"dummy,demo,hay,wahtsapp,update"
     }
 ```
 
 **Response:**
 ```
     {
-        "IsSuccess": 1,
-        "msg": "Address Book updated successfully"
+        "success": true,
+        "status_code": 200,
+        "message": "Successfully update your blog",
+        "data": null
     }
 ```
 
-###
-Delete Address (Http Method DELETE)
-http://localhost:8181/addressbook/public/api/DeleteAddressBookById
+### Delete Blog:
+delete blog use blog if
 
-**Request:**
-```
-    {
-        "address_book_id":1
-    }
-```
+**DELETE URL: http://localhost/project_name/api/blog/delete/**``{blog_id}``
+
 **Response:**
 ```
-    {
-        "IsSuccess": 0,
-        "msg": "Deleted successfully"
-    }
+   {
+    "success": true,
+    "status_code": 200,
+    "message": "Successfully deleted your blog",
+    "data": []
+}
 ```
 
 
