@@ -91,7 +91,7 @@ Registration:
     }
 ```
 
-### login:
+### login API:
 
 **POST URL: http://localhost/project_name/api/login**
 
@@ -138,10 +138,10 @@ Registration:
         }
     }
 ```
-### Make new blog:
+### Make new blog API:
 create a new blog for login user
 
-**POST URL: http://localhost/project_name/api/blog/store/**``{login_user_id}``
+**POST URL: http://localhost/project_name/api/blog/store/**``{login_user_id}``**
 
 **Request:**
 ```
@@ -171,10 +171,10 @@ create a new blog for login user
     }
 ```
 
-### Get Blog List:
+### Get Blog List API:
 get all blog list of login user
 
-**GET URL: http://localhost/project_name/api/blog/**``{login_user_id}``
+**GET URL: http://localhost/project_name/api/blog/**``{login_user_id}``**
 
 **Response:**
 ```
@@ -208,10 +208,10 @@ get all blog list of login user
 ```
 
 
-### Get Blog details:
+### Get Blog details API:
 get single blog details use blog id
 
-**GET URL: http://localhost/project_name/api/blog/show/**``{blog_id}``
+**GET URL: http://localhost/project_name/api/blog/show/**``{blog_id}``**
 
 **Response:**
 ```
@@ -232,10 +232,10 @@ get single blog details use blog id
     }
 ```
 
-### Update blog:
+### Update blog API:
 update a new blog use blog id
 
-**POST URL: http://localhost/project_name/api/blog/update/**``{blog_id}``
+**POST URL: http://localhost/project_name/api/blog/update/**``{blog_id}``**
 
 **Request:**
 ```
@@ -256,10 +256,10 @@ update a new blog use blog id
     }
 ```
 
-### Delete Blog:
+### Delete Blog API:
 delete blog use blog if
 
-**DELETE URL: http://localhost/project_name/api/blog/delete/**``{blog_id}``
+**DELETE URL: http://localhost/project_name/api/blog/delete/**``{blog_id}``**
 
 **Response:**
 ```
@@ -276,3 +276,4 @@ delete blog use blog if
 If you've found an error in this sample, please [report an issue](https://differenz-system:welcome007@github.com/differenz-system/AddressBook.Laravel.git).  You can also send your feedback and suggestions at info@differenzsystem.com
 
 Happy coding!
+
