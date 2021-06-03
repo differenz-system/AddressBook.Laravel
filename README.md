@@ -141,7 +141,7 @@ Registration:
 ### Make new blog API:
 create a new blog for login user
 
-**POST URL: http://localhost/project_name/api/blog/store/**``{login_user_id}``**
+**POST URL: http://localhost/project_name/api/blog/store/``{login_user_id}``**
 
 **Request:**
 ```
@@ -174,7 +174,7 @@ create a new blog for login user
 ### Get Blog List API:
 get all blog list of login user
 
-**GET URL: http://localhost/project_name/api/blog/**``{login_user_id}``**
+**GET URL: http://localhost/project_name/api/blog/``{login_user_id}``**
 
 **Response:**
 ```
@@ -211,7 +211,7 @@ get all blog list of login user
 ### Get Blog details API:
 get single blog details use blog id
 
-**GET URL: http://localhost/project_name/api/blog/show/**``{blog_id}``**
+**GET URL: http://localhost/project_name/api/blog/show/``{blog_id}``**
 
 **Response:**
 ```
@@ -235,7 +235,7 @@ get single blog details use blog id
 ### Update blog API:
 update a new blog use blog id
 
-**POST URL: http://localhost/project_name/api/blog/update/**``{blog_id}``**
+**POST URL: http://localhost/project_name/api/blog/update/``{blog_id}``**
 
 **Request:**
 ```
@@ -259,7 +259,7 @@ update a new blog use blog id
 ### Delete Blog API:
 delete blog use blog if
 
-**DELETE URL: http://localhost/project_name/api/blog/delete/**``{blog_id}``**
+**DELETE URL: http://localhost/project_name/api/blog/delete/``{blog_id}``**
 
 **Response:**
 ```
