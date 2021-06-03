@@ -1,9 +1,8 @@
-# AddressBook.Laravel
+# BlogManagement.Laravel
 
 ## Overview
 
 This repository contains **Blog Management** application for Laravel that shows design & coding practices followed by **[Differenz System](http://www.differenzsystem.com/)**.
-
 
 The app does the following:
 1. **Register** new account
