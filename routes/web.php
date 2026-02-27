@@ -1,34 +1,39 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register all of the routes for an application.
-| It is a breeze. Simply tell Lumen the URIs it should respond to
-| and give it the Closure to call when that URI is requested.
-|
-*/
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ContactController;
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
+Route::get('/', function () {
+    return redirect()->route('login');
 });
 
-$router->group(['prefix' => 'api'], function () use ($router) {
-    
+// Guest routes (login, register)
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class, 'login'])->name('login.perform');
 
-    $router->get('AllUsers',  ['uses' => 'UsersController@showAllUsers']);
-    $router->post('loginUser',  ['uses' => 'UsersController@loginUser']);
-    $router->post('registerUser' , ['uses' => 'UsersController@registerUser']);
-    
-    //Address Book Routes
-    //$router->get('authors/{id}', ['uses' => 'AuthorController@showOneAuthor']);
-    $router->get('addressBook/{id}',  ['uses' => 'AddressBookController@showAllAddress']);
-    $router->post('add-address', ['uses' => 'AddressBookController@addAddress']);
-    $router->delete('delete-address/{id}', ['uses' => 'AddressBookController@deleteAddress']);
-    $router->post('update-address/{id}', ['uses' => 'AddressBookController@updateAddress']);
-    
-    //$router->delete('authors/{id}', ['uses' => 'AuthorController@delete']);
-    //$router->put('authors/{id}', ['uses' => 'AuthorController@update']);
+    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register.show');
+    Route::post('/register', [RegisterController::class, 'register'])->name('register.perform');
+});
+
+// Auth routes
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+
+    // Contacts
+    Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index');
+    Route::get('/favorites', [ContactController::class, 'favoritesIndex'])->name('favorites.index');
+    Route::get('/contacts/datatable', [ContactController::class, 'datatable'])->name('contacts.datatable');
+    Route::get('/favorites/datatable', [ContactController::class, 'favoritesDatatable'])->name('favorites.datatable');
+    Route::get('/contacts/export/csv', [ContactController::class, 'exportCsv'])->name('contacts.export.csv');
+    Route::get('/contacts/{id}', [ContactController::class, 'show'])->name('contacts.show');
+    Route::post('/contacts', [ContactController::class, 'store'])->name('contacts.store');
+    Route::put('/contacts/{id}', [ContactController::class, 'update'])->name('contacts.update');
+    Route::delete('/contacts/{id}', [ContactController::class, 'destroy'])->name('contacts.destroy');
+    Route::patch('/contacts/{id}/favorite', [ContactController::class, 'toggleFavorite'])->name('contacts.favorite');
 });

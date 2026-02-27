@@ -1,193 +1,504 @@
-# AddressBook.LaravelLumen
+# Address Book (Laravel 12)
 
-## Overview
+A modern address book application built with Laravel 12, PHP 8.2, MySQL, Bootstrap 5, jQuery, and DataTables. It features secure authentication, AJAX-based CRUD for contacts, polished UI/UX, a collapsible sidebar, and a phonebook-style contact list with alphabetical filtering, search, and client-side pagination.
 
-This repository contains **Address Book** application for Laravel that shows design & coding practices followed by **[Differenz System](http://www.differenzsystem.com/)**.
+**NEW:** Complete RESTful API layer with Laravel Sanctum authentication for mobile apps and third-party integrations.
 
+## Features
 
-The app does the following:
-1. **Login:** User can login via emailId/password. 
-2. **Get All Address:** It will list all the save contacts, having the option to add a new contact.
-3. **Create new contact:** User can add a new contact to his address book by filling detail.
+### Web Application
+- Authentication (register, login, logout) with CSRF protection and hashed passwords
+- Contacts CRUD via jQuery AJAX and Laravel controllers
+- Ownership enforcement: users can only access their own contacts
+- Dashboard with animated stat cards and searchable DataTable (10 per page)
+- Contacts page: modern list + detail panel, alphabet rail (A–Z), search, and pagination
+- Bootstrap modals for Add/Edit/View/Delete, with client-side and server-side validation
+- Additional contact fields: Work (job title, company, department, work email/phone, website) and About (birthday, notes)
+- Collapsible sidebar with persistent state and tooltips
 
+### RESTful API
+- Token-based authentication using Laravel Sanctum
+- Complete CRUD operations for contacts
+- User registration, login, logout, and profile management
+- Search, filtering, and pagination support
+- Standardized JSON responses with proper error handling
+- CORS enabled for cross-origin requests
+- Production-ready with security best practices
 
-## Pre-requisites
--[Visual Studio code](https://code.visualstudio.com/)
--[ Laravel ](https://laravel.com/)
--[ Lumen ](https://lumen.laravel.com/)
--[ MySql ](https://www.mysql.com/)
+## Tech Stack
 
+- Backend: Laravel 12 (PHP 8.2), MySQL, Laravel Sanctum
+- Frontend: Bootstrap 5, Bootstrap Icons, jQuery, DataTables (via CDN)
+- API: RESTful endpoints with JSON responses
+- Validation: Laravel Form Requests + jQuery Validate (client-side hints)
 
-## Getting Started
-1. [Install Visual Studio code](https://code.visualstudio.com/) Editor.
-2. Clone this sample repository in to the PHP configuration folder
-3. Open Terminal, go to location of the repo
-4. Install [Composer](https://getcomposer.org/). If you don't have a composer in the machine.
-4. Enter command for install the 'Composer Update' (make sure to go inside project first). It will add required file in the Project.
-5. Create database 'address_book' in PhpMyAdmin Panel.
-6. Enter Command in CMD 'php artisan migrate' for create table in the database.
+## Requirements
 
+- PHP 8.2+
+- MySQL 5.7+/8.0+
+- Composer
 
+## Quick Start
 
-## Key Tools & Technologies
-- **Database:** MySql
-- **Authentication:** login
-- **API/Service calls:** fetch API
-- **IDE:**  VSCode
-- **Framework:** Laravel|lumen
+### Web Application
 
-Now call the API one by one.
+1. Clone the repo and install dependencies
+   - composer install
 
-##API
-### Register New user
-Registration: 
-http://localhost:8181/addressbook/public/api/registerUser
+2. Create and configure environment
+   - cp .env.example .env
+   - Update DB_ settings (DB_DATABASE, DB_USERNAME, DB_PASSWORD)
 
-**Request:**
+3. Generate app key and run migrations
+   - php artisan key:generate
+   - php artisan migrate
+
+4. Start the dev server
+   - php artisan serve
+
+5. Visit the app
+   - http://127.0.0.1:8000
+   - Register a user account and log in
+
+### API Setup
+
+The API is automatically available when you start the application. No additional setup required!
+
+**API Base URL:** `http://127.0.0.1:8000/api/`
+
+**API Documentation:** Visit `http://127.0.0.1:8000/api/` for complete endpoint documentation.
+
+#### Quick API Test
+
+```bash
+# 1. Register a new user
+curl -X POST http://127.0.0.1:8000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"name":"John Doe","email":"john@example.com","password":"password123","password_confirmation":"password123"}'
+
+# 2. Login to get token
+TOKEN=$(curl -X POST http://127.0.0.1:8000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"john@example.com","password":"password123"}' | jq -r '.data.token')
+
+# 3. Get contacts using token
+curl -X GET http://127.0.0.1:8000/api/contacts \
+  -H "Authorization: Bearer $TOKEN"
 ```
-    {        
-        "first_name":"test",
-        "last_name":"test",
-        "email_id":"test@diif.com",
-        "password":"pass123",
-        "c_password":"pass123",
+
+## Project Structure Highlights
+
+### Web Application
+- routes/web.php
+  - Guest: login/register
+  - Auth: dashboard and contacts routes (index, datatable, show, store, update, destroy)
+
+- app/Http/Controllers/
+  - Auth/LoginController, Auth/RegisterController
+  - DashboardController (stats + recent contacts)
+  - ContactController (AJAX CRUD + datatable endpoint)
+
+- app/Http/Requests/
+  - LoginRequest, RegisterRequest, StoreContactRequest, UpdateContactRequest
+
+### API Layer
+- routes/api.php
+  - Public: auth/register, auth/login
+  - Protected: auth/logout, auth/profile, contacts CRUD, favorites
+
+- app/Http/Controllers/Api/
+  - AuthController (register, login, logout, profile)
+  - ContactController (CRUD, search, favorites, pagination)
+
+- app/Http/Requests/Api/
+  - RegisterRequest, LoginRequest, StoreContactRequest, UpdateContactRequest
+
+- app/Http/Resources/
+  - ContactResource (single contact formatting)
+  - ContactCollection (paginated collection formatting)
+
+### Shared Components
+- app/Models/
+  - User (hasMany Contact, HasApiTokens trait)
+  - Contact (fillable, belongsTo User)
+
+- database/migrations/
+  - 2026_02_24_000000_create_contacts_table.php
+  - 2026_02_24_010000_add_work_about_to_contacts_table.php
+  - 2026_02_27_074505_create_personal_access_tokens_table.php (Sanctum)
+
+- resources/views/
+  - layouts/app.blade.php (collapsible sidebar, top navbar)
+  - auth/login.blade.php, auth/register.blade.php (animated UI, merged icon inputs, error styling)
+  - dashboard/index.blade.php (stat cards + Recent Contacts DataTable)
+  - contacts/index.blade.php (list + detail UI, alphabet rail, search, pagination)
+  - contacts/modals.blade.php (Add/Edit/View/Delete modals)
+
+- public/css/
+  - admin.css (admin layout + components)
+  - auth.css (auth pages look & feel)
+
+## Usage Guide
+
+### Web Application
+
+- Dashboard
+  - See total contacts and recent list (DataTable: 10 per page, search enabled)
+  - Quick-add contact via modal (AJAX)
+
+- Contacts
+  - A–Z alphabet filter, search box, and client-side pagination for the left list
+  - Click a contact to open the right detail panel (tabs: Contact, Work, About)
+  - Add/Edit/Delete via modals; fields validated on client and server
+
+### RESTful API
+
+#### Authentication
+All API endpoints (except register/login) require a Bearer token:
+
+```http
+Authorization: Bearer {your_token_here}
+```
+
+#### Authentication Endpoints
+
+**Register User**
+```http
+POST /api/auth/register
+Content-Type: application/json
+
+{
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "password123",
+    "password_confirmation": "password123"
+}
+```
+
+**Login User**
+```http
+POST /api/auth/login
+Content-Type: application/json
+
+{
+    "email": "john@example.com",
+    "password": "password123"
+}
+```
+
+**Logout User**
+```http
+POST /api/auth/logout
+Authorization: Bearer {token}
+```
+
+**Get User Profile**
+```http
+GET /api/auth/profile
+Authorization: Bearer {token}
+```
+
+#### Contact Endpoints
+
+**List Contacts**
+```http
+GET /api/contacts?search=john&is_favorite=true&sort_by=first_name&per_page=10
+Authorization: Bearer {token}
+```
+
+**Create Contact**
+```http
+POST /api/contacts
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+    "first_name": "Jane",
+    "last_name": "Smith",
+    "email": "jane@example.com",
+    "phone": "+1234567890",
+    "company": "Tech Corp",
+    "is_favorite": true
+}
+```
+
+**Get Single Contact**
+```http
+GET /api/contacts/{id}
+Authorization: Bearer {token}
+```
+
+**Update Contact**
+```http
+PUT /api/contacts/{id}
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+    "first_name": "Jane Updated",
+    "email": "jane.updated@example.com"
+}
+```
+
+**Delete Contact**
+```http
+DELETE /api/contacts/{id}
+Authorization: Bearer {token}
+```
+
+**Get Favorite Contacts**
+```http
+GET /api/contacts/favorites
+Authorization: Bearer {token}
+```
+
+**Toggle Favorite Status**
+```http
+PATCH /api/contacts/{id}/toggle-favorite
+Authorization: Bearer {token}
+```
+
+#### Response Format
+
+**Success Response:**
+```json
+{
+    "success": true,
+    "message": "Operation completed successfully",
+    "data": {
+        // Response data here
     }
+}
 ```
 
-**Response:**
+**Error Response:**
+```json
+{
+    "success": false,
+    "message": "Validation failed",
+    "errors": {
+        "field_name": ["Error message"]
+    }
+}
 ```
-	{
-        "success": 1,
-        "data": {
-            "first_name": "test",
-            "last_name": "test",
-            "email_id": "test@gmail.com",
-            "password": "pass123",
-            "is_active": "1",
-            "users_id": 1
+
+**Paginated Response:**
+```json
+{
+    "success": true,
+    "message": "Contacts retrieved successfully",
+    "data": {
+        "data": [...],
+        "meta": {
+            "total": 100,
+            "count": 15,
+            "per_page": 15,
+            "current_page": 1,
+            "total_pages": 7,
+            "has_more_pages": true
         },
-        "messsage": "User Register Successfully"
+        "links": {
+            "first": "http://localhost/api/contacts?page=1",
+            "last": "http://localhost/api/contacts?page=7",
+            "prev": null,
+            "next": "http://localhost/api/contacts?page=2"
+        }
     }
+}
 ```
 
-###
-login:
-http://localhost:8181/addressbook/public/api/loginUser
+## Security & Authorization
 
-**Request:**
+### Web Application
+- All contacts are scoped to the authenticated user (authorization enforced in queries)
+- Non-owned/missing contacts return 404/JSON errors; form requests validate inputs
+
+### API Security
+- Token-based authentication using Laravel Sanctum
+- All contact endpoints are protected and require valid Bearer token
+- Users can only access their own contacts (scoped queries)
+- CORS enabled for cross-origin requests
+- Token revocation on logout
+- Password hashing and secure token generation
+- Request validation with custom error messages
+
+## Troubleshooting
+
+### Web Application
+- Styles not updating: hard refresh the browser or run php artisan optimize:clear
+- DB errors: verify .env DB_ credentials and that migrations ran (php artisan migrate:status)
+- 419/CSRF issues: ensure meta csrf-token is present (layout) and AJAX sets the header
+
+### API Issues
+- 401 Unauthorized: Check that you're sending a valid Bearer token in Authorization header
+- 403 Forbidden: Ensure user has permission to access the resource
+- 419 Page Expired: API doesn't use CSRF tokens, ensure you're hitting /api/ endpoints
+- CORS errors: Check that your frontend is sending proper headers and credentials
+- Token not working: Ensure token hasn't expired and user hasn't logged out
+
+### Common Commands
+```bash
+# Check migration status
+php artisan migrate:status
+
+# Clear cache if API routes not working
+php artisan route:clear
+php artisan config:clear
+
+# Generate new app key if needed
+php artisan key:generate
+
+# Check if Sanctum is properly installed
+php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
 ```
+
+## Deployment Notes
+
+### Web Application
+- This project uses CDN assets (no NPM build required by default)
+- Ensure APP_KEY is set (php artisan key:generate) and APP_ENV/APP_URL are correct
+- Configure a persistent database and set proper file permissions for storage/
+
+### API Deployment
+- Ensure CORS settings are properly configured for your frontend domains
+- Set appropriate token expiration limits in config/sanctum.php
+- Consider rate limiting for API endpoints in production
+- Ensure HTTPS is used for production API endpoints
+- Configure proper firewall rules to protect API endpoints
+
+### Environment Variables for API
+```env
+# Standard Laravel variables
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://your-domain.com
+
+# Database configuration
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+
+# Sanctum configuration (optional)
+SANCTUM_STATEFUL_DOMAINS=your-frontend-domain.com
+```
+
+## API Examples
+
+### JavaScript/Fetch Example
+```javascript
+// Login and get token
+const login = async (email, password) => {
+  const response = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  });
+  const data = await response.json();
+  return data.data.token;
+};
+
+// Get contacts
+const getContacts = async (token) => {
+  const response = await fetch('/api/contacts', {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return await response.json();
+};
+
+// Create contact
+const createContact = async (token, contactData) => {
+  const response = await fetch('/api/contacts', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(contactData)
+  });
+  return await response.json();
+};
+```
+
+### Postman Collection
+You can import the following collection into Postman to test all API endpoints:
+
+```json
+{
+  "info": {
+    "name": "Address Book API",
+    "description": "Complete API for Laravel Address Book application"
+  },
+  "variable": [
     {
-        "email_id":"test@gmail.com",
-        "password":"pass123"
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8000/api"
+    },
+    {
+      "key": "token",
+      "value": ""
     }
-```
-**Response:**
-```
+  ],
+  "item": [
     {
-       "success": 1,
-        "data": "test@gmail.com",
-        "messsage": "User Login Successfully"
-    }
-```
-###
-
-
-Display address by userid:
-http://localhost:8181/addressbook/public/api/addressBook/:user_id
-
-**Response:**
-```
-    {
-        "success": 1,
-        "data": [
-            {
-            "users_id": 1,
-            "first_name": "up",
-            "last_name": "tapsi",
-            "contact_no": "123456",
-            "email_id": "up@diff.com",
-            "is_active": 1
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}"
             },
-            {
-            "users_id": 1,
-            "first_name": "test",
-            "last_name": "tes",
-            "contact_no": "012345678",
-            "email_id": "test@diff.email",
-            "is_active": 0
-            }
-        ],
-        "message": "success"
-    }
-```
-
-###
-Add Address
-http://localhost:8181/addressbook/public/api/add-address/:user_id
-
-**Request:**
-```
-    {
-        "first_name":"test",
-        "last_name":"test",
-        "email_id":"test@gmail.com",
-        "contact_no":"7878985845",
-    }
-```
-**Response:**
-```
-    {
-        "success": 0,
-        "data": {
-            "first_name": "test",
-            "last_name": "test",
-            "email_id": "test@gmail.com",
-            "contact_no": "0123456987",
-            "is_active": "1",
-            "addess_book_id": 1
+            "url": "{{baseUrl}}/auth/register"
+          }
         },
-        "message": "Address Added Successfully"
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/login"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('token', response.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
     }
+  ]
+}
 ```
 
-###
-Update Address
-http://localhost:8181/addressbook/public/api/update-address/:address_id
+---
 
-**Request:**
-```
-    {
-        "first_name":"test",
-        "last_name":"test",
-        "email_id":"test@gmail.com",
-        "contact_no":"7878985845",
-    }
-```
+**🎉 Your Laravel Address Book now includes both a beautiful web interface and a complete RESTful API!**
 
-**Response:**
-```
-    {
-    "success": 0,
-    "data": 1,
-    "message": "Address Updated Successfully"
-    }
-```
-
-###
-Delete Address (Http Method DELETE)
-http://localhost:8181/addressbook/public/api/delete-address/:address_id
-
-**Response:**
-```
-    {
-        "success": 0,
-        "data": [],
-        "message": "Address Deleted Successfully"
-    }
-```
-
-
-## Support
-If you've found an error in this sample, please [report an issue](https://differenz-system:welcome007@github.com/differenz-system/AddressBook.LaravelLumen.git).  You can also send your feedback and suggestions at info@differenzsystem.com
-
-Happy coding!
